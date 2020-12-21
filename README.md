@@ -2,7 +2,7 @@
 
 Gotlin make you be able to write Go lang like Kotlin.
 
-```
+```go
 package main
 
 import(

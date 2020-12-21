@@ -43,6 +43,19 @@ func (s *Stream) Apply(fn interface{}) *Stream {
 	return s
 }
 
+// ForEach function applys fn to each of entities.
+func (s *Stream) ForEach(fn interface{}) *Stream {
+	entityv, fnv := reflect.ValueOf(s.entity), reflect.ValueOf(fn)
+
+	assertFnAndFnInAndFnOut(fnv, []reflect.Type{entityv.Type()}, []reflect.Type{})
+
+	for i := 0; i < entityv.Len(); i++ {
+		fnv.Call([]reflect.Value{entityv.Index(i)})
+	}
+
+	return s
+}
+
 // Map function is like a map function in a functional programming.
 func (s *Stream) Map(fn interface{}) *Stream {
 	entityv, fnv := reflect.Indirect(reflect.ValueOf(s.entity)), reflect.ValueOf(fn)

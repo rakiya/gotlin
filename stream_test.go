@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"fmt"
 	r "reflect"
 	"strconv"
 	"testing"
@@ -341,4 +342,38 @@ func Test_Inject_InvalidFnOut(t *testing.T) {
 	}()
 
 	NewStream([]int{1, 2, 3, 4}).Inject(0, func(res int, it int) float64 { return float64(res + it) })
+}
+
+func Example_ForEach_Success() {
+	s := NewStream([]int{1, 2, 3, 4, 5})
+
+	s.ForEach(func(it int) {
+		fmt.Println(it)
+	})
+	// Output:
+	// 1
+	// 2
+	// 3
+	// 4
+	// 5
+}
+
+func Test_ForEach_InvalidFnIn(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("No panic")
+		}
+	}()
+
+	NewStream([]int{1, 2, 3, 4}).ForEach(func(it string) { /* Do nothing */ })
+}
+
+func Test_ForEach_InvalidFnOut(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("No panic")
+		}
+	}()
+
+	NewStream([]int{1, 2, 3, 4}).ForEach(func(it int) float64 { return float64(it) })
 }

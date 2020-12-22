@@ -47,7 +47,11 @@ func (s *Stream) Apply(fn interface{}) *Stream {
 func (s *Stream) ForEach(fn interface{}) *Stream {
 	entityv, fnv := reflect.ValueOf(s.entity), reflect.ValueOf(fn)
 
-	assertFnAndFnInAndFnOut(fnv, []reflect.Type{entityv.Type()}, []reflect.Type{})
+	if reflect.TypeOf(s.entity).Kind() == reflect.Ptr {
+		assertFnAndFnInAndFnOut(fnv, []reflect.Type{reflect.TypeOf(s.entity).Elem().Elem()}, []reflect.Type{})
+	} else {
+		assertFnAndFnInAndFnOut(fnv, []reflect.Type{reflect.TypeOf(s.entity).Elem()}, []reflect.Type{})
+	}
 
 	for i := 0; i < entityv.Len(); i++ {
 		fnv.Call([]reflect.Value{entityv.Index(i)})
